@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <!-- Custom Styles -->
     <link rel="stylesheet" href="./assets/style.css">
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 </head>
 <body>
 
@@ -31,13 +33,13 @@
                         
                     </div>
                     <div class="row cities">
-                        List cities here!
+                        List search history for cities here!
                     </div>
                 </div>
                 
                 <div class="col-9">
-                    <div class="row city-weather">City weather goes here!</div>
-                    <div class="row forecast">5-day forecast goes here!</div>
+                    <div class="row" id="city-weather">City weather goes here!</div>
+                    <div class="row" id="forecast">5-day forecast goes here!</div>
                 </div>
             </div>
         </div>
