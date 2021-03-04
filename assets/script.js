@@ -47,6 +47,7 @@ const getWeather = function(city, route, callback) {
 }
 
 const displayCityWeather = function(weatherData) {
+    cityWeatherEl.empty();
     const date = moment().format('MM[/]DD[/]YYYY'); 
     const weatherIcon = weatherData.weather[0].icon;
     cityWeatherEl.append(`
@@ -59,6 +60,7 @@ const displayCityWeather = function(weatherData) {
 
 // Loops through forecast data, parses and displays it
 const displayCityForecast = function(forecastData) {
+    forecastEl.empty();
     
     for (var i = 0; i < forecastData.length; i++) {
         let item = forecastData[i];
@@ -86,28 +88,50 @@ const getSearchedCities = function() {
     if (!cities) {
         cities = [];
     }
-
+    console.log(`Searched Cities: ${cities}`);
     return cities;
 }
 // TODO check if the city is unique before adding
-const updateSearchedCities = function(city) {
+const updateSearchedCities = function(searchedCity) {
     let cities = getSearchedCities();
 
     if (!cities) {
         cities = [city];
     } else {
-        cities.push(city);
+
+        if (!isCityInSearchList(searchedCity)) {
+            cities.push(searchedCity);
+        } else {
+            return;
+        }
+
     }
 
     localStorage.setItem('searchedCities', JSON.stringify(cities));
 }
 
 const displaySearchedCities = function() {
+    searchedCitiesListEl.empty();
+
     cities = getSearchedCities();
-    
+
     for (var i = 0; i < cities.length; i++) {
         searchedCitiesListEl.append(`<li class="list-group-item">${cities[i]}</li>`);
     }
+    
+}
+
+const isCityInSearchList = function(city) {
+    let result = false;
+    cities = getSearchedCities();
+
+    for (var i = 0; i < cities.length; i++) {
+        if (city === cities[i]) {
+            result = true;
+        }
+    }
+    console.log(`Is ${city} in searched list? ${result}`);
+    return result;
 }
 
 // Parses forecast data and returns an array of forecast objects for the next five days
@@ -135,7 +159,6 @@ const formatWeatherDate = function(date, format) {
 }
 
 searchBtnEl.on('click', handleSearchForm);
-// TODO needs event target handling
 searchedCitiesListEl.on('click', '.list-group-item', handleSearchForm);
 
 displaySearchedCities();
