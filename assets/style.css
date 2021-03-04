@@ -5,3 +5,7 @@
 .col, .col-3, .col-9 {
     border: 2px solid green;
 }
+
+#search-msg {
+    color: red;
+}

@@ -5,44 +5,52 @@ const searchBtnEl = $('#search-btn');
 const cityWeatherEl = $('#city-weather');
 const forecastEl = $('#forecast');
 const searchedCitiesListEl = $('#searchedCities');
+const searchMsgEl = $('#search-msg');
 
 // TODO Needs error handling. input is empty? 404?
 const handleSearchForm = function(event) {
+    searchMsgEl.empty();
     let city;
 
     if (event.target.id === 'search-btn') {
         city = searchCityInputEl.val();
+
+        if (!city) {
+            displayErrMsg('Please enter a city.');
+            return;
+        }
+
     } else {
         city = $(event.target).text();
     }
 
     getWeather(city, '/weather', function(data) {
         displayCityWeather(data);
+        updateSearchedCities(city);
+        displaySearchedCities();
     });
 
     getWeather(city, '/forecast', function(data) {
-        var forecastData = parseForecastData(data);
-        console.log(forecastData);
+        var forecastData = getFiveDayForecast(data);
         displayCityForecast(forecastData);
     });
 
-    updateSearchedCities(city);
-    displaySearchedCities();
+    
+    
     
     
 }
  
-// TODO Error handling 
 const getWeather = function(city, route, callback) {
     const url = WEATHER_API + route + '?q=' + city + '&units=imperial' + '&appid=' + API_KEY;
     
     fetch(url)
-        .then(function(response) {
-            return response.json();
-        }).then(function(data) {
-            console.log(data);
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(function(data) {
             callback(data);
-        });
+        })
+        .catch(error => displayErrMsg(error));
 
 }
 
@@ -58,7 +66,6 @@ const displayCityWeather = function(weatherData) {
         `);
 }
 
-// Loops through forecast data, parses and displays it
 const displayCityForecast = function(forecastData) {
     forecastEl.empty();
     
@@ -88,10 +95,10 @@ const getSearchedCities = function() {
     if (!cities) {
         cities = [];
     }
-    console.log(`Searched Cities: ${cities}`);
+
     return cities;
 }
-// TODO check if the city is unique before adding
+
 const updateSearchedCities = function(searchedCity) {
     let cities = getSearchedCities();
 
@@ -121,6 +128,10 @@ const displaySearchedCities = function() {
     
 }
 
+const displayErrMsg = function(msg) {
+    searchMsgEl.text(msg);
+}
+
 const isCityInSearchList = function(city) {
     let result = false;
     cities = getSearchedCities();
@@ -130,12 +141,12 @@ const isCityInSearchList = function(city) {
             result = true;
         }
     }
-    console.log(`Is ${city} in searched list? ${result}`);
+    
     return result;
 }
 
 // Parses forecast data and returns an array of forecast objects for the next five days
-const parseForecastData = function(data) {
+const getFiveDayForecast = function(data) {
     let fiveDayForecast = [];
     let forecastList = data.list;
     let checkDate = moment().add(1, 'days').format('YYYYMMDD');
@@ -156,6 +167,13 @@ const parseForecastData = function(data) {
 
 const formatWeatherDate = function(date, format) {
     return moment(date, 'YYYY[-]MM[-]DD').format(format);
+}
+
+const handleErrors = function(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
 }
 
 searchBtnEl.on('click', handleSearchForm);
