@@ -8,21 +8,20 @@ const searchedCitiesListEl = $('#searched-cities');
 const searchMsgEl = $('#search-msg');
 
 const handleSearchForm = function(event) {
-    // Clears search message
     searchMsgEl.empty();
     let city;
 
-    // If the search button was clicked or enter key was pressed, set city to the search input value.
+    // If the search button was clicked or enter key was pressed, set city var to the search input value.
     if (event.target.id === 'search-btn' || event.key === 'Enter') {
         city = searchCityInputEl.val();
-        // clears search input
+        // Clears search input
         searchCityInputEl.val('');
 
         if (!city) {
             displayErrMsg('Please enter a city.');
             return;
         }
-    // If an item in the cities list was clicked, sets the city var to the list item text. 
+    // If an item in the cities list is clicked, sets the city var to the list item text. 
     } else if ($(event.target).parent('ul').attr('id') === 'searched-cities') {
         city = $(event.target).text();
     } else {
@@ -30,19 +29,24 @@ const handleSearchForm = function(event) {
     }
 
     getWeather(city, '/weather', function(data) {
-        displayCityWeather(data);
-        updateSearchedCities(city);
-        displaySearchedCities();
+        
+        getUvi(data.coord, function(uvi) {
+            data.uvi = uvi;
+            displayCityWeather(data);
+            updateSearchedCities(city);
+            displaySearchedCities();
+        });
+        
     });
 
     getWeather(city, '/forecast', function(data) {
-        var forecastData = getFiveDayForecast(data);
+        const forecastData = getFiveDayForecast(data);
         displayCityForecast(forecastData);
     });
     
     
 }
- 
+
 const getWeather = function(city, route, callback) {
     const url = WEATHER_API + route + '?q=' + city + '&units=imperial' + '&appid=' + API_KEY;
     
@@ -54,6 +58,16 @@ const getWeather = function(city, route, callback) {
 
 }
 
+const getUvi = function(coord, callback) {
+    const url = WEATHER_API + '/onecall?' + 'lat=' + coord.lat + '&' + 'lon=' + coord.lon + '&exclude=hourly,daily' + '&appid=' + API_KEY;
+    
+    fetch(url)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(data => callback(data.current.uvi))
+        .catch(error => displayErrMsg(error));
+}
+
 const displayCityWeather = function(weatherData) {
     cityWeatherEl.empty();
     const date = moment().format('MM[/]DD[/]YYYY'); 
@@ -63,7 +77,11 @@ const displayCityWeather = function(weatherData) {
         <p>Temperature: ${weatherData.main.temp} &#176;F</p>
         <p>Humidity: ${weatherData.main.humidity}%</p>
         <p>Wind Speed: ${weatherData.wind.speed} MPH</p>
+        <p>UV Index: <span id="uv-index" class="p-2">${weatherData.uvi}</span></p>
         `);
+
+    const uviColor = getUvIndexColor(weatherData.uvi);
+    $('#uv-index').css('background-color', uviColor);
     
     cityWeatherEl.css('visibility', 'visible');
 }
@@ -169,6 +187,31 @@ const getFiveDayForecast = function(data) {
     
 }
 
+// TODO Uv Index color logic: 1-2 = green, 3-5 = yellow, 6-7 = orange, 8-10 red, 11+ purple
+const getUvIndexColor = function(uvi) {
+
+    if (uvi < 3) {
+        return 'green';
+    } else if (uvi < 6) {
+        return 'yellow';
+    } else if (uvi < 8) {
+        return 'orange';
+    } else if (uvi < 11) {
+        return 'red';
+    } else if (uvi >= 11) {
+        return 'purple';
+    }
+
+}
+
+$(document).on('keypress', handleSearchForm);
+searchBtnEl.on('click', handleSearchForm);
+searchedCitiesListEl.on('click', '.list-group-item', handleSearchForm);
+
+displaySearchedCities();
+
+// ************** Utility Functions **************************
+
 const formatWeatherDate = function(date, format) {
     return moment(date, 'YYYY[-]MM[-]DD').format(format);
 }
@@ -180,10 +223,4 @@ const handleErrors = function(response) {
     return response;
 }
 
-$(document).on('keypress', handleSearchForm);
-searchBtnEl.on('click', handleSearchForm);
-searchedCitiesListEl.on('click', '.list-group-item', handleSearchForm);
-
-
-
-displaySearchedCities();
+// ************************************************************
