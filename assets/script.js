@@ -4,24 +4,29 @@ const searchCityInputEl = $('#search-city');
 const searchBtnEl = $('#search-btn');
 const cityWeatherEl = $('#city-weather');
 const forecastEl = $('#forecast');
-const searchedCitiesListEl = $('#searchedCities');
+const searchedCitiesListEl = $('#searched-cities');
 const searchMsgEl = $('#search-msg');
 
-// TODO Needs error handling. input is empty? 404?
 const handleSearchForm = function(event) {
+    // Clears search message
     searchMsgEl.empty();
     let city;
 
-    if (event.target.id === 'search-btn') {
+    // If the search button was clicked or enter key was pressed, set city to the search input value.
+    if (event.target.id === 'search-btn' || event.key === 'Enter') {
         city = searchCityInputEl.val();
+        // clears search input
+        searchCityInputEl.val('');
 
         if (!city) {
             displayErrMsg('Please enter a city.');
             return;
         }
-
-    } else {
+    // If an item in the cities list was clicked, sets the city var to the list item text. 
+    } else if ($(event.target).parent('ul').attr('id') === 'searched-cities') {
         city = $(event.target).text();
+    } else {
+        return;
     }
 
     getWeather(city, '/weather', function(data) {
@@ -34,9 +39,6 @@ const handleSearchForm = function(event) {
         var forecastData = getFiveDayForecast(data);
         displayCityForecast(forecastData);
     });
-
-    
-    
     
     
 }
@@ -47,9 +49,7 @@ const getWeather = function(city, route, callback) {
     fetch(url)
         .then(handleErrors)
         .then(response => response.json())
-        .then(function(data) {
-            callback(data);
-        })
+        .then(data => callback(data))
         .catch(error => displayErrMsg(error));
 
 }
@@ -64,10 +64,14 @@ const displayCityWeather = function(weatherData) {
         <p>Humidity: ${weatherData.main.humidity}%</p>
         <p>Wind Speed: ${weatherData.wind.speed} MPH</p>
         `);
+    
+    cityWeatherEl.css('visibility', 'visible');
 }
 
 const displayCityForecast = function(forecastData) {
     forecastEl.empty();
+
+    forecastEl.append(`<h3>5-Day Forecast:</h3>`);
     
     for (var i = 0; i < forecastData.length; i++) {
         let item = forecastData[i];
@@ -75,7 +79,7 @@ const displayCityForecast = function(forecastData) {
 
         forecastEl.append(`
             <div class="col-auto">
-                <div class="card">
+                <div class="card my-1">
                     <div class="card-body">
                         <h3 class="card-title">${date}</h3>
                         <p class="card-text"><span><img src="http://openweathermap.org/img/wn/${item.weather[0].icon}.png"></p>
@@ -123,7 +127,7 @@ const displaySearchedCities = function() {
     cities = getSearchedCities();
 
     for (var i = 0; i < cities.length; i++) {
-        searchedCitiesListEl.append(`<li class="list-group-item">${cities[i]}</li>`);
+        searchedCitiesListEl.append(`<li class="list-group-item city-item">${cities[i]}</li>`);
     }
     
 }
@@ -176,7 +180,10 @@ const handleErrors = function(response) {
     return response;
 }
 
+$(document).on('keypress', handleSearchForm);
 searchBtnEl.on('click', handleSearchForm);
 searchedCitiesListEl.on('click', '.list-group-item', handleSearchForm);
+
+
 
 displaySearchedCities();

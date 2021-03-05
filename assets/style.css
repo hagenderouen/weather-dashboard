@@ -1,11 +1,24 @@
-.row {
-    border: 2px solid red;
+#main-header {
+    background-color: rgb(54, 54, 54);
+    color: white;
 }
 
-.col, .col-3, .col-9 {
-    border: 2px solid green;
+#search-col {
+    background-color: #EEEEEE;
 }
 
 #search-msg {
     color: red;
 }
+
+#city-weather {
+    visibility: hidden;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+
+.card {
+    background-color: #0c6efd;
+    color: white;
+}
+
