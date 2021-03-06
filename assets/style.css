@@ -3,7 +3,7 @@
     color: white;
 }
 
-#search-col {
+#search-container {
     background-color: #EEEEEE;
 }
 
@@ -15,6 +15,10 @@
     visibility: hidden;
     border: 1px solid lightgray;
     border-radius: 5px;
+}
+
+#searched-cities:hover {
+    cursor: pointer;
 }
 
 #uv-index {

@@ -28,21 +28,23 @@
         <div id="search-row" class="row">
             
             <div id="search-col" class="col-3">
-                <div class="row">
-                    <h5>Search for a city:</h5>
-                </div>
-                <div class="row search">
-                    <div class="col-sm">
-                        <div class="d-flex flex-row">
-                            <input type="text" class="form-control" id="search-city">
-                        <button type="button" class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
-                        </div>
-                        <p id="search-msg"></p>
+                <div id="search-container">
+                    <div class="row p-1">
+                        <h5>Search for a city:</h5>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        <ul class="list-group" id="searched-cities"></ul>
+                    <div class="row search p-1">
+                        <div class="col-sm">
+                            <div class="d-flex flex-row">
+                                <input type="text" class="form-control" id="search-city">
+                            <button type="button" class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i></button>
+                            </div>
+                            <p id="search-msg"></p>
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col mb-3">
+                            <ul class="list-group" id="searched-cities"></ul>
+                        </div>
                     </div>
                 </div>
             </div>

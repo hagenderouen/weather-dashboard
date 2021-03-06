@@ -187,7 +187,6 @@ const getFiveDayForecast = function(data) {
     
 }
 
-// TODO Uv Index color logic: 1-2 = green, 3-5 = yellow, 6-7 = orange, 8-10 red, 11+ purple
 const getUvIndexColor = function(uvi) {
 
     if (uvi < 3) {
@@ -210,7 +209,7 @@ searchedCitiesListEl.on('click', '.list-group-item', handleSearchForm);
 
 displaySearchedCities();
 
-// ************** Utility Functions **************************
+// ************** Utilities **********************************
 
 const formatWeatherDate = function(date, format) {
     return moment(date, 'YYYY[-]MM[-]DD').format(format);
