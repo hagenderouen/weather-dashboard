@@ -73,17 +73,22 @@ const displayCityWeather = function(weatherData) {
     const date = moment().format('MM[/]DD[/]YYYY'); 
     const weatherIcon = weatherData.weather[0].icon;
     cityWeatherEl.append(`
-        <h2>${weatherData.name} (${date}) <span><img src="http://openweathermap.org/img/wn/${weatherIcon}.png"></span></h2>
-        <p>Temperature: ${weatherData.main.temp} &#176;F</p>
-        <p>Humidity: ${weatherData.main.humidity}%</p>
-        <p>Wind Speed: ${weatherData.wind.speed} MPH</p>
-        <p>UV Index: <span id="uv-index" class="p-2">${weatherData.uvi}</span></p>
+        <div id="city-weather-border" class="my-1 p-1">
+            <h2>${weatherData.name} (${date}) <span><img src="http://openweathermap.org/img/wn/${weatherIcon}.png"></span></h2>
+            <p>Temperature: ${weatherData.main.temp} &#176;F</p>
+            <p>Humidity: ${weatherData.main.humidity}%</p>
+            <p>Wind Speed: ${weatherData.wind.speed} MPH</p>
+            <p>UV Index: <span id="uv-index" class="p-2">${weatherData.uvi}</span></p>
+        </div>
         `);
 
     const uviColor = getUvIndexColor(weatherData.uvi);
+    // Sets black font color for visibility with the yellow background
+    if (uviColor === 'yellow') {
+        $('#uv-index').css('color', 'black');
+    }
+
     $('#uv-index').css('background-color', uviColor);
-    
-    cityWeatherEl.css('visibility', 'visible');
 }
 
 const displayCityForecast = function(forecastData) {
