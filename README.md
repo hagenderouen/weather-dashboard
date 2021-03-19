@@ -1,6 +1,6 @@
 # weather-dashboard
-A simple weather app to search and view the current weather for select cities and their 5-day forecasts.
+A simple weather app to search and view the current weather for select cities and their 5-day forecasts. Use with [OpenWeather API](https://openweathermap.org/api)
 
 <img src="./assets/screenshot.png" width="350px">
 
-[View Live!](https://hagenderouen.github.io/weather-dashboard/)
+Fork it, extend it, and make it your own!
