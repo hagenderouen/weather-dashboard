@@ -1,4 +1,4 @@
-const API_KEY = 'b5cc15167e821f3fea3ca413eaaa5cd2';
+const API_KEY = 'your_key_here';
 const WEATHER_API = 'https://api.openweathermap.org/data/2.5'
 const searchCityInputEl = $('#search-city');
 const searchBtnEl = $('#search-btn');
